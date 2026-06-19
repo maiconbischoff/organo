@@ -1,0 +1,560 @@
+arrow functions:
+
+
+
+
+Arrow function x function
+Discutir no fórum
+Vamos esclarecer um conceito fundamental que pode gerar confusão no JavaScript: a diferença real entre funções tradicionais e Arrow Functions, especialmente focando no que é o this e por que ele importa tanto.
+
+Entendendo o que é o this
+Antes de entender a diferença entre funções tradicionais e Arrow Functions, precisamos esclarecer bem o que é esse tal de this. No JavaScript, this é uma palavra-chave especial que se refere ao contexto onde uma função está sendo executada. Porém, seu valor pode mudar dependendo de como a função é invocada, o que pode gerar comportamentos inesperados.
+
+Como funções tradicionais lidam com o this?
+Com funções tradicionais (criadas usando a palavra-chave function), o valor de this é definido pela forma como a função é chamada:
+
+
+
+function mostraNome() { 
+
+console.log(this.nome); 
+
+} 
+
+ 
+
+nome = 'Ana'; // aqui, nome está no escopo global 
+
+ 
+
+mostraNome(); // Resultado: Ana (this refere-se ao escopo global)
+
+
+
+
+Veja que aqui o this referenciou o escopo global porque chamamos a função diretamente. Isso pode gerar problemas quando usamos funções como callbacks (funções passadas para outras funções).
+
+O problema antes das Arrow Functions
+Antes de termos Arrow Functions, era muito comum o problema de perder o contexto (this) dentro de funções de callback. Isso acontecia muito em situações de funções internas, como callbacks em temporizadores ou eventos:
+
+
+
+function Pessoa(nome) { 
+
+this.nome = nome; 
+
+ 
+
+setTimeout(function() { 
+
+console.log(this.nome); // Aqui, this.nome fica undefined 
+
+}, 1000); 
+
+} 
+
+ 
+
+new Pessoa('Carlos'); // Resultado: undefined
+
+
+
+
+
+
+Neste exemplo, o this dentro da função do setTimeout perdeu a referência ao objeto criado por new Pessoa().
+
+Como lidávamos com isso antes das Arrow Functions?
+A solução clássica para esse problema era o método .bind(). Com .bind(), podíamos "fixar" o contexto do this:
+
+
+
+
+
+
+function Pessoa(nome) { 
+
+this.nome = nome; 
+
+ 
+
+setTimeout(function() { 
+
+console.log(this.nome); // Agora funciona! 
+
+}.bind(this), 1000); 
+
+} 
+
+ 
+
+new Pessoa('Carlos'); // Resultado: Carlos
+
+Usar .bind() resolvia, mas tornava o código mais verboso e complicado.
+
+
+
+A chegada das Arrow Functions
+Com as Arrow Functions, introduzidas no ES6, ficou muito mais fácil lidar com o problema do this. Isso porque Arrow Functions não possuem seu próprio valor de this. Em vez disso, elas capturam o this do contexto onde foram declaradas (lexical scoping):
+
+
+function Pessoa(nome) { 
+
+this.nome = nome; 
+
+ 
+
+setTimeout(() => { 
+
+console.log(this.nome); // Arrow function captura o this corretamente 
+
+}, 1000); 
+
+} 
+
+ 
+
+new Pessoa('Carlos'); // Resultado: Carlos
+
+
+Perceba como a Arrow Function simplificou muito o nosso código!
+
+Por que isso importa?
+Entender a diferença entre funções tradicionais e Arrow Functions é fundamental, principalmente ao lidar com código legado, ou seja, sistemas antigos ou escritos antes do ES6. Muitos códigos antigos ainda utilizam funções tradicionais com .bind(). Portanto, é essencial que você compreenda essa lógica claramente, para lidar bem com qualquer cenário que encontrar.
+
+Guia de bolso:
+this: Refere-se ao contexto onde a função é chamada.
+
+Funções tradicionais: Possuem seu próprio valor de this, dependendo da forma como são chamadas.
+
+Arrow Functions: Não têm seu próprio this; capturam o valor de this do contexto em que são declaradas.
+
+Antes de Arrow Functions, usávamos .bind() para corrigir problemas com this.
+
+Agora, com essa bagagem, você estará mais preparada(o) para escrever códigos modernos e também entender profundamente códigos mais antigos. Continue firme nessa jornada!
+
+
+exemplos simplifacado functions:
+
+
+function normal:
+
+function saudacoes(nome){
+     console.log('olá',nome);
+}
+
+
+arrow:
+
+const saudacoes = (nome) =>{
+     console.log('olá',nome);
+}
+
+arrow simplificada de uma linha:
+
+const saudacoes = nome => console.log('olá',nome);
+
+como ela so tem um param nao precisa estar entre parenteses
+
+
+function normal:
+
+function calculaDobroDeUm(numero){
+     return numero * 2;
+}
+
+arrow:
+
+const calculaDobroDeUm = (numero) =>{
+     return numero * 2;
+}
+
+
+arrow simplificada de uma linha:
+
+const calculaDobroDeUm = numero => numero * 2;
+
+como ela está no modo de uma linha nao precisa do return
+
+
+
+
+
+
+
+
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+
+SPREAD E REST OPERATOR
+
+
+Introduzindo operadores Spread e REST
+Vamos continuar nossa jornada no JavaScript. Agora, vamos aprender sobre dois operadores muito úteis para trabalhar com objetos: o Spread Operator e o REST Operator. Vamos criar um novo arquivo chamado Spread e REST.js para isso.
+
+Primeiramente, vamos declarar uma constante pessoa que receberá um objeto. Este objeto representará uma pessoa com um nome, idade e profissão. Por exemplo, podemos definir o nome como Camila, a idade e a profissão como desenvolvedora.
+
+
+const pessoa = {
+    nome: 'Camila',
+    idade: 29,
+    profissao: 'Desenvolvedora'
+}
+
+Demonstrando problemas de referência em objetos
+Imaginemos que queremos clonar esse objeto para criar outra pessoa com as mesmas informações. Poderíamos fazer algo como declarar const Camila2 e atribuir a ela o valor de Camila1. Se quisermos alterar a idade de Camila2 para 30 anos, por exemplo, e depois exibir no console as informações de Camila1 e Camila2, perceberemos que ambas terão a idade de 30 anos.
+
+
+
+const camila1 = {
+    nome: 'Camila',
+    idade: 29,
+    profissao: 'Desenvolvedora'
+}
+
+const camila2 = camila1;
+camila2.idade = 30;
+
+console.log(camila1);
+console.log(camila2);
+
+
+Isso ocorre porque, ao fazermos a atribuição Camila2 = Camila1, não estamos clonando o objeto. Estamos apenas criando outra referência que aponta para o mesmo objeto. É como se tivéssemos uma única caixa de memória com dois endereços apontando para ela, ao invés de dois objetos distintos.
+
+Utilizando o Spread Operator para clonagem
+Para clonar o objeto corretamente, podemos usar o Spread Operator. Com ele, criamos um novo objeto e espalhamos as propriedades do objeto original. Fazemos isso utilizando ...Camila1. Dessa forma, a clonagem será eficiente.
+
+
+const camila2 = { ...camila1 };
+camila2.idade = 30;
+
+console.log(camila1);
+console.log(camila2);
+
+
+
+Ao executar o código novamente, veremos que Camila1 mantém a idade original de 29 anos, enquanto Camila2 terá 30 anos. Assim, temos duas linhas do tempo diferentes, como antes e depois de um aniversário, por exemplo. Essa é uma das funcionalidades do Spread Operator.
+
+Atualizando propriedades com o Spread Operator
+Clonar e criar outra variável ou constante totalmente desvinculada da primeira pode ser feito usando o spread. Outra coisa que podemos fazer é o seguinte: imagine que queremos atualizar todos os dados, menos um. Podemos fazer assim: podemos dizer, por exemplo, que Camila1 vai receber tudo que já tinha, mas Camila2 não queremos nos preocupar com o que era. Suponha que a profissão era desenvolvedora e queremos dizer que agora ela é uma desenvolvedora sênior, pois foi promovida. O que estamos fazendo é copiar todas as propriedades de Camila2, mas alterando e sobrescrevendo a profissão. Copiamos tudo e sobrescrevemos.
+
+
+let camila1 = {
+    nome: 'Camila',
+    idade: 29,
+    profissao: 'Desenvolvedora'
+}
+
+camila1 = {
+    ...camila2,
+    profissao: 'Desenvolvedora Senior',
+    possuiCNH: true
+}
+
+console.log(camila1);
+
+
+Podemos inclusive adicionar algo que ainda não existe, por exemplo, Camila pode ter uma nova propriedade, como possuiCNH. Agora estamos colocando um novo valor. Qual é o lance do spread? Ele copia tudo e, por ordem, estamos sobrescrevendo a profissão e criando uma nova propriedade, possuiCNH. Se executarmos um console.log de Camila1, veremos como ficará. Aqui está Camila2 e aqui está Camila1, onde trocamos a propriedade profissão. Repare que a idade de 30 está correta porque pegamos de Camila2, mas a profissão mudou porque a sobrescrevemos e também adicionamos uma nova propriedade. A ideia do spread é literalmente espalhar todas as propriedades. Podemos fazer o que quisermos com isso, seja clonar, sobrescrever uma ou duas, criar uma referência nova, guardar uma referência antiga, enfim, há várias coisas que conseguimos fazer. O que queremos mostrar é como ele funciona: espalha as propriedades, pega todas as propriedades de Camila2 e as espalha.
+
+Separando propriedades com o REST Operator
+Há uma última coisa que queremos mostrar que dá para fazer com isso, que é o seguinte: conseguimos separar, por exemplo, a propriedade nome em uma variável diferente e o resto fica igual. Para trabalhar com isso, criamos uma constante e usamos o operador chamado de rest operator, ou seja, o operador de resto, que pega tudo. Imagine que queremos pegar e separar o nome porque precisamos dele separado por algum motivo, e o restante colocamos em uma constante chamada restante. Isso vem do objeto Camila1. Repare que separamos o nome do resto e, se fizermos um console.log de nome e restante, veremos que agora temos o nome e o outro objeto que ficou, ou seja, o restante, as propriedades restantes estão todas lá, menos o nome. Separamos essas propriedades, pegamos o nome, guardamos em uma variável específica e o restante continua tudo junto.
+
+
+const { nome, ...restante } = camila1;
+
+console.log(nome);
+console.log(restante);
+
+
+
+Temos o spread e o rest operator. É assim que trabalhamos com esses operadores. Conseguimos fazer spread e rest operator com arrays também, e vamos mostrar isso no nosso próximo encontro.
+
+
+
+------------------------
+
+
+
+Usando REST e spread com arrays
+
+
+
+Vamos prosseguir. Agora, queremos criar um novo arquivo chamado spread_e_spread_rest_de_arrays.js. Nele, vamos criar nosso já conhecido array de frutas. Vamos adicionar algumas frutas, como maçã, banana (ou banana, dependendo de onde você está) e goiaba.
+
+Para começar, vamos declarar nosso array de frutas vazio:
+
+
+
+
+const frutas = [];
+
+const frutas = ['Maçã', 'banana', 'goiaba'];
+
+
+const maisFrutas = [];
+
+const maisFrutas = ['Uva', 'Morango', 'Kiwi'];
+
+
+Utilizando o operador spread para clonagem
+Com o operador spread, conseguimos fazer um clone do array. Assim, criamos uma constante clone que recebe o spread de frutas.
+
+
+
+const clone = [...frutas];
+
+
+Antes de prosseguirmos, vamos adicionar uma fruta ao array frutas usando o método push.
+
+frutas.push('Pitanga');
+
+Agora, podemos fazer o console.log de tudo: frutas, maisFrutas e clone. Observe que, nesse cenário, como o clone foi feito antes de adicionarmos a pitanga, ele não deve conter a pitanga. Vamos testar isso.
+
+
+
+console.log(frutas);
+console.log(maisFrutas);
+console.log(clone);
+
+
+
+
+Explicando a clonagem e a referência de arrays
+Ao abrir o terminal e executar o comando node spread_e_spread_rest_de_arrays, veremos que o primeiro array contém a pitanga, o segundo array (maisFrutas) permanece inalterado, e o clone contém até a goiaba, mas não a pitanga.
+
+Lembramos que fizemos a clonagem usando o spread porque, se apenas atribuíssemos, estaríamos passando a referência. Isso é semelhante ao que fizemos com o objeto pessoa. Se apenas atribuíssemos, teríamos duas constantes apontando para o mesmo array, e qualquer alteração em um refletiria no outro automaticamente. Dessa forma, não estamos passando a referência, mas sim os valores, criando outro array com os mesmos elementos do array frutas. Portanto, esse clone funciona corretamente.
+
+Unindo arrays com o operador spread
+Conseguimos realizar a mesma operação com objetos e arrays. Podemos fazer a junção de arrays, ou seja, unir dois arrays. Vamos criar outro array com todas as frutas. Será um array diferente, mas queremos incluir aqui frutas e mais frutas, utilizando o spread, que espalha todos os elementos.
+
+
+
+
+const todasAsFrutas = [...frutas, ...maisFrutas];
+
+
+Agora, podemos utilizar o console.log para exibir todas as frutas.
+
+
+
+console.log(todasAsFrutas);
+
+
+Antes de adicionar a pitanga, todas as frutas devem ter seis elementos, enquanto o array de frutas terá quatro. Vamos verificar se funciona: ao executar node spread array, o primeiro array com quatro frutas está correto, pois adicionamos a pitanga. O segundo, que é o mais frutas, contém frutas diferentes. O terceiro é o clone, sem a pitanga, e o último é quando juntamos frutas e mais frutas antes de adicionar a pitanga, resultando em seis frutas. Continua funcionando da mesma forma.
+
+Extraindo elementos de arrays com o rest operator
+Podemos também utilizar essa técnica para obter os primeiros elementos de um array. A sintaxe é a mesma, e podemos observar o spread no arquivo spread rest.js. Na linha 21, fizemos um spread com chaves, pois chaves representam um objeto. Quebramos um objeto, pegamos o nome e criamos o restante. Podemos fazer o mesmo com arrays, utilizando colchetes, pois estamos lidando com arrays.
+
+Vamos pegar, por exemplo, todas as frutas e extrair a primeira fruta, a segunda fruta e o restante.
+
+const [primeira, segunda, ...restante] = todasAsFrutas;
+
+Podemos então utilizar console.log para exibir a primeira fruta, a segunda fruta e o restante.
+
+
+console.log(primeira);
+console.log(segunda);
+console.log(restante);
+
+
+Concluindo a demonstração do uso de spread e rest
+Ao fazer o spread e o restante, utilizamos o rest operator. Caso contrário, ele pegaria apenas a terceira fruta. Queremos ver maçã, banana, goiaba, uva, morango e kiwi. Vamos verificar se funciona? Maravilha, está aqui: primeira fruta, maçã; segunda fruta, goiaba; e o restante: goiaba, uva, morango e kiwi.
+
+Conseguimos utilizar o spread e o rest operator com arrays e objetos. Isso será muito utilizado, especialmente no mundo do front-end, ao trabalhar com React, por exemplo. Essa sintaxe de spread e rest será bastante comum. Agora, já sabemos identificar quando estamos lidando com spread ou rest operator.
+
+Por enquanto, era isso que queríamos mostrar, mas ainda não terminamos essa jornada. Existem algumas funcionalidades interessantes que o JavaScript possui e que ainda queremos explorar.
+
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+
+
+
+Para saber mais: ECMAScript
+Discutir no fórum
+ECMAScript (abreviado como ES) é o nome oficial da especificação da linguagem JavaScript. É como se fosse o "manual de instruções" que define como a linguagem deve funcionar, quais recursos ela oferece, quais são suas regras e comportamentos.
+
+JavaScript é a linguagem que usamos no dia a dia. ECMAScript é o padrão que define como o JavaScript deve ser.
+
+Esse padrão é mantido por um grupo chamado TC39, que se reúne periodicamente para discutir e aprovar melhorias e novos recursos para a linguagem.
+
+E o que é ES6?
+A sigla ES6 se refere à 6ª edição da especificação ECMAScript. Ela foi lançada em 2015 e trouxe uma revolução no JavaScript moderno. Por isso, você também vai ver ela sendo chamada de ES2015.
+
+Essa versão foi tão importante que até hoje usamos o nome "ES6" como sinônimo de "JavaScript moderno".
+
+Algumas das principais novidades que surgiram com o ES6 (muitas das quais você já aprendeu neste curso):
+
+let e const
+
+Arrow Functions (=>)
+
+Template literals (`texto ${variavel}`)
+
+Destructuring
+
+Rest e Spread operators (...)
+
+Parâmetros padrão
+
+Módulos (import e export)
+
+Promises
+
+Por que o ES6 foi um marco tão grande?
+Antes do ES6, o JavaScript era muito mais limitado e, muitas vezes, mais difícil de escrever e ler. Com o ES6, a linguagem ficou:
+
+Mais expressiva
+
+Mais moderna
+
+Mais próxima de outras linguagens populares
+
+Mais fácil de manter e escalar em projetos grandes
+
+Além disso, o ES6 ajudou o JavaScript a crescer fora do navegador, como no caso do Node.js, que você também começou a explorar nesta etapa.
+
+O que significa o "+" no ES6+?
+O + representa todas as versões que vieram depois do ES6. Desde 2015, a linguagem JavaScript tem sido atualizada todos os anos com pequenas (mas poderosas) melhorias. Essas versões seguem o formato do ano:
+
+ES2016: Array.includes, operador de exponenciação (**)
+
+ES2017: async/await
+
+ES2018: melhorias em expressões regulares, rest/spread para objetos
+
+ES2019, ES2020, ES2021...: e assim por diante
+
+Cada versão traz recursos que facilitam ainda mais a vida de quem programa.
+
+Por que isso importa?
+Saber que o JavaScript evolui com o tempo é fundamental para você continuar aprendendo e escrevendo código moderno e eficiente. Além disso, entender que recursos como spread, destructuring e arrow functions vêm de versões mais novas da linguagem ajuda você a entender por que eles não aparecem em códigos mais antigos — e também por que valem a pena ser estudados.
+
+Essa bagagem teórica vai ser muito útil quando você for estudar frameworks modernos (como React, Vue ou Angular), que utilizam fortemente recursos do ES6+.
+
+
+
+
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+
+Introduzindo a funcionalidade destructuring
+Agora é o momento de aprendermos uma funcionalidade chamada destructuring. Nós a utilizamos de forma implícita anteriormente, mas agora vamos explorá-la mais a fundo para conhecermos melhor essa ferramenta do JavaScript.
+
+Vamos criar um novo arquivo chamado destructuring.js. Nele, criaremos uma constante chamada pessoa, que conterá as propriedades nome, idade e profissão. Vamos definir o nome como "Natália", a idade como 17 e a profissão como "estudante".
+
+Declarando e inicializando a constante pessoa
+Primeiro, vamos declarar a constante pessoa:
+
+
+const pessoa;
+
+
+Agora, vamos inicializar essa constante com as propriedades desejadas:
+
+
+
+const pessoa = {
+    nome: 'Nathália',
+    idade: 17,
+    profissao: 'Estudante'
+};
+
+
+Se quisermos exibir no console o nome e a idade, já sabemos como fazer isso:
+
+console.log(pessoa.nome);
+console.log(pessoa.idade);
+
+Ao executar o comando node destructuring.js, veremos no console o nome "Natália" e a idade 17.
+
+Aplicando destructuring no objeto pessoa
+Agora, vamos aplicar o destructuring. Antes de fazer o console.log, vamos declarar:
+
+const { nome, idade } = pessoa;
+
+
+Estamos criando novas constantes, nome e idade, com base nas propriedades do objeto pessoa. Assim, podemos fazer:
+
+console.log(nome);
+console.log(idade);
+
+E ao executar o comando node destructuring.js, o resultado será o mesmo.
+
+Explorando a vantagem do destructuring
+Talvez se pergunte qual a vantagem disso. A principal vantagem está na forma como escrevemos o código, mais do que na performance. Vamos pensar em um exemplo de saudação. Criaremos uma função chamada saudacao, que receberá um objeto pessoa e exibirá uma mensagem de saudação.
+
+Primeiro, vamos definir a função saudacao:
+
+function saudacao(pessoa) {
+    console.log('Olá', pessoa.nome);
+}
+
+
+Para testar, passamos o objeto pessoa para a função e executamos o arquivo novamente:
+
+
+saudacao(pessoa);
+
+
+Veremos "Olá, Natália" no console.
+
+Utilizando destructuring em funções
+Em alguns cenários, especialmente em softwares grandes, pode ser complicado saber quais propriedades um objeto possui. Em vez de passar o objeto pessoa inteiro para a função, podemos usar o destructuring para receber apenas o que precisamos. Assim, na função saudacao, podemos declarar:
+
+
+function saudacao({ nome }) {
+    console.log('Olá,', nome);
+}
+
+Dessa forma, a função recebe apenas a propriedade nome, independentemente das outras propriedades que o objeto possa ter.
+
+Destructuring em node e sua importância
+Quando utilizamos o destructuring em node, o funcionamento é o mesmo, mas qual é a diferença agora? Ao observarmos a função, sabemos que vamos receber um objeto como parâmetro, mas estamos interessados apenas na propriedade nome desse objeto; o restante não importa. Se precisássemos, por exemplo, da idade, poderíamos adicioná-la ao lado e fazer uma verificação com um if, como:
+
+
+function saudacao({ nome, idade }) {
+    console.log('Olá,', nome);
+    if (idade > 18) {
+        console.log('maior de idade');
+    }
+}
+
+
+Assim, conseguimos desestruturar o objeto pegando apenas as propriedades que desejamos.
+
+Compreendendo a legibilidade do destructuring
+Por que estamos aprendendo isso? A legibilidade é importante, pois conseguimos entender melhor os parâmetros que estão chegando, especialmente quando os objetos começam a ficar complexos. Isso é ainda mais relevante quando lidamos com código que não foi escrito por nós ou que escrevemos há muito tempo. Portanto, é essencial entender como o destructuring funciona com objetos. Aqui, estamos apresentando um caso de uso.
+
+Aplicando destructuring em arrays
+O mesmo conceito se aplica a arrays. Se tivermos um array, por exemplo:
+
+
+
+const frutas = ['uva', 'banana'];
+
+Podemos criar uma constante pegando as primeiras posições, primeira e segunda, do array frutas:
+
+
+const [primeira, segunda] = frutas;
+
+
+Isso não resultará em um novo array, mas sim na extração da primeira e segunda posições do array. Note que, se fizermos:
+
+
+// const primeira = frutas[0]
+// const segunda = frutas[1]
+
+
+O resultado final é o mesmo. No entanto, estamos falando de legibilidade.
+
+Concluindo o aprendizado sobre destructuring
+Compreender esses operadores nos permite identificar rapidamente o que está acontecendo no código. Muitas ferramentas, frameworks e bibliotecas utilizam essa sintaxe, e, se não estivermos preparados, podemos pensar que se trata de algo específico da ferramenta ou biblioteca, mas, na verdade, isso é JavaScript puro. São operações que podemos realizar com arrays e objetos.
+
+Agora, já conhecemos o destructuring, incluindo o spread e o rest operator. Nosso conjunto de ferramentas está completo. Um último lembrete antes de encerrarmos: não se preocupe em decorar todos esses nomes, mas sim em entender o que está acontecendo. O que devemos levar deste vídeo é a capacidade de reconhecer quando estamos desestruturando um array e pegando suas primeiras posições, ignorando o restante.
+
+Além disso, ao ver a sintaxe de destructuring nos parâmetros que uma função está recebendo, devemos reconhecer que a função recebe um objeto inteiro, mas nos importamos apenas com propriedades específicas, como nome e idade.
+
+
