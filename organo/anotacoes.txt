@@ -558,3 +558,133 @@ Agora, já conhecemos o destructuring, incluindo o spread e o rest operator. Nos
 Além disso, ao ver a sintaxe de destructuring nos parâmetros que uma função está recebendo, devemos reconhecer que a função recebe um objeto inteiro, mas nos importamos apenas com propriedades específicas, como nome e idade.
 
 
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+
+
+Explorando o conceito de módulos JavaScript
+
+Para isso, precisamos informar ao Node.js que desejamos usar módulos para o script. Vamos executar o comando:
+
+
+npm init -y
+
+Esse comando cria um arquivo package.json que identifica o projeto Node.js com as configurações necessárias, inferindo algumas informações. 
+O -y serve para aceitar todas as configurações padrão sem perguntas. Ao abrir o package.json, encontramos definições do projeto, como nome, 
+versão, descrição, arquivo principal, scripts disponíveis, palavras-chave, autor e licença. Inicialmente, o tipo é CommonJS, 
+mas queremos aprender sobre módulos. Então, alteramos o tipo para módulo:
+
+{
+  "name": "calculadora",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
+
+
+Criando funções de operações matemáticas
+Vamos criar um arquivo chamado calculadora.js. 
+Nossa calculadora terá métodos disponíveis, como a função soma, que recebe num1 e num2 e retorna a soma dos dois números:
+
+function soma(num1, num2) {
+    return num1 + num2;
+}
+
+Também teremos a função subtracao, que recebe num1 e num2 e retorna a subtração do primeiro pelo segundo:
+
+
+function subtracao(num1, num2) {
+    return num1 - num2;
+}
+
+
+Criando a interface de interação com o usuário
+Agora, vamos criar a interface da nossa calculadora para interagir com o usuário e capturar os números. Faremos isso em um arquivo separado, index.js. A razão para separar os arquivos é que, ao desenvolver projetos mais complexos, é importante organizar o código em vez de criar um único arquivo grande. Assim, podemos separar os métodos das operações em um arquivo chamado "operacoesMatematicas".
+
+No index.js, vamos trazer o leitor de entrada. Para isso, utilizamos a sintaxe de módulo com import:
+
+
+
+import { createInterface } from 'readline';
+
+const leitor = createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+
+Queremos fazer perguntas ao usuário, como "Digite o primeiro número". Utilizamos \n para formatar a saída no terminal. Em seguida, perguntamos "Digite a operação" e "Digite o segundo número", formatando as saídas de forma clara:
+
+
+
+leitor.question('Digite o primeiro número:\n>', (numero1) => {
+    leitor.question('Digite a operação:\n+: Soma\n-: Subtração\n>', (operacao) => {
+        leitor.question('Digite o segundo número:\n>', (numero2) => {
+            const num1 = Number(numero1); //casting
+            const num2 = Number(numero2); //casting
+
+            let resultado = null;
+
+            if (operacao == '+') {
+                resultado = soma(num1, num2);
+            } else if (operacao == '-') {
+                resultado = subtracao(num1, num2);
+            } else {
+                console.log('Operação inválida!');
+            }
+
+            if (resultado != null) {
+                console.log('O resultado da operação é: ', resultado);
+            }
+
+            leitor.close();
+        });
+    });
+});
+
+
+
+Convertendo strings para números e escolhendo operações
+Ao ler os dados, numero1 e numero2 são strings, não números. Para convertê-los, utilizamos a função Number(), transformando as strings em números reais. Isso nos permite realizar operações matemáticas corretamente.
+
+Para escolher a operação, podemos usar um if ou else if. Se a operação for o símbolo de soma (+), executamos a soma. Se for subtração (-), executamos a subtração. Caso contrário, exibimos uma mensagem de "operação inválida".
+
+Testando a calculadora e corrigindo erros
+Nossa calculadora básica está organizada, separando as operações da interface. Vamos testar no terminal com node calculadora/index.js. Ao executar, recebemos um erro: "require não está definido em es-module-scope". Isso ocorre porque no package.json definimos o projeto como módulo, e não como CommonJS. Portanto, não podemos usar require. Para resolver, utilizamos a sintaxe de módulo com import. Usamos import com destructuring para importar de algum lugar, por exemplo, import { createInterface } from 'readline'.
+
+Após ajustar, executamos novamente node calculadora/index.js e não houve erro. O terminal solicita o primeiro número, a operação (soma ou subtração) e o segundo número. No entanto, houve um erro de referência: "soma não está definida". Isso ocorre porque não importamos as funções corretamente. Precisamos importar soma e subtração do arquivo operacoesMatematica.js. Para isso, usamos:
+
+
+import { soma, subtracao } from './operacoesMatematicas.js';
+
+
+
+Exportando funções e finalizando o teste
+Ao tentar importar, recebemos outro erro: "nada foi exportado". Precisamos exportar explicitamente as funções no arquivo operacoesMatematica.js usando:
+
+
+export function soma(num1, num2) {
+    return num1 + num2;
+}
+
+export function subtracao(num1, num2) {
+    return num1 - num2;
+}
+
+
+
+Agora, o Node exporta corretamente, permitindo a importação.
+
+Testamos novamente com node calculadora/index.js. Após digitar os números e a operação, o resultado é exibido corretamente: "O resultado da operação é 14". Nossa calculadora já funciona com soma e subtração.
+
+Desafio de expansão da calculadora
+Como desafio, podemos expandir a calculadora para incluir multiplicação, divisão e operações exponenciais. A base está pronta, basta continuar exportando e importando as operações matemáticas. Assim, as responsabilidades ficam bem definidas: de um lado, as funções que realizam as operações; do outro, a interface que interage com o usuário através do terminal.
+
