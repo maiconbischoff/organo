@@ -179,9 +179,29 @@ como ela está no modo de uma linha nao precisa do return
 
 
 
+arrow functions sao muito usadas em callbacks por sua sintaxe simplifacada
+podemos tambem passar um calbalck por referencia(desacoplando):
+
+setTimeout(exibeFrase ,5000); //    aqui a função está sendo referenciada detro de setTimeout, ela não esta sendo executada, só referenciada, sem ()
+
+function exibeFrase(){
+    console.log('Olá mundo');
+}
+
+pode passsar como função normal detro da callback (funções passadas como parametros para outras funções):
 
 
+setTimeout(function(){
+    console.log('Olá mundo');
+} ,5000);
 
+pode passsar como arrowfunction detro da callback:
+
+
+setTimeout(() => console.log('Olá mundo') ,5000);
+
+
+callback tambem são chamados de higer order functions ou função de ordem superior
 
 **************************************************************************************************************************************************************
 **************************************************************************************************************************************************************
